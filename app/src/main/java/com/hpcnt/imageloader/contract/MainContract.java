@@ -20,5 +20,7 @@ public interface MainContract {
         void setVolleyQueue(RequestQueue requestQueue);
 
         void getHtml(String targetUrl);
+
+        void parseImageUrl();
     }
 }

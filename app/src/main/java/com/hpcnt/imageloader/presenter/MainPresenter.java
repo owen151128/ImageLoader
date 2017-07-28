@@ -8,7 +8,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.hpcnt.imageloader.contract.MainContract;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
 
 /**
  * Created by 0wen151128 on 2017. 7. 28..
@@ -17,12 +22,15 @@ import java.net.HttpURLConnection;
 public class MainPresenter implements MainContract.Presenter {
     private static final String TAG = MainPresenter.class.getCanonicalName();
     private MainContract.View view;
+    private ArrayList<String> imageUrlList;
+    private String htmlDocument;
     private RequestQueue requestQueue;
     private StringRequest stringRequest;
 
     @Override
     public void attachView(MainContract.View view) {
         this.view = view;
+        imageUrlList = new ArrayList<>();
     }
 
     @Override
@@ -40,16 +48,18 @@ public class MainPresenter implements MainContract.Presenter {
         stringRequest = new StringRequest(targetUrl, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-
+                htmlDocument = response;
+                if (htmlDocument != null)
+                    parseImageUrl();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                int statusCode=error.networkResponse.statusCode;
-                Log.v("httpResult", "Http response code "+statusCode+" return");
-                if(HttpURLConnection.HTTP_MOVED_PERM==statusCode || HttpURLConnection.HTTP_MOVED_TEMP==statusCode || HttpURLConnection.HTTP_SEE_OTHER==statusCode) {
-                    String location=error.networkResponse.headers.get("Location");
-                    Log.v("httpRedirect", "Redirect to "+location);
+                int statusCode = error.networkResponse.statusCode;
+                Log.v("httpResult", "Http response code " + statusCode + " return");
+                if (HttpURLConnection.HTTP_MOVED_PERM == statusCode || HttpURLConnection.HTTP_MOVED_TEMP == statusCode || HttpURLConnection.HTTP_SEE_OTHER == statusCode) {
+                    String location = error.networkResponse.headers.get("Location");
+                    Log.v("httpRedirect", "Redirect to " + location);
                     getHtml(location);
                 }
             }
@@ -58,4 +68,11 @@ public class MainPresenter implements MainContract.Presenter {
         requestQueue.add(stringRequest);
     }
 
+    @Override
+    public void parseImageUrl() {
+        Document document = Jsoup.parse(htmlDocument);
+        for (Element e : document.getElementsByTag("img")) {
+            imageUrlList.add(e.absUrl("src"));
+        }
+    }
 }
