@@ -1,5 +1,6 @@
 package com.hpcnt.imageloader.presenter;
 
+
 import android.util.Log;
 
 import com.android.volley.RequestQueue;
@@ -22,7 +23,6 @@ import java.util.ArrayList;
 public class MainPresenter implements MainContract.Presenter {
     private static final String TAG = MainPresenter.class.getCanonicalName();
     private MainContract.View view;
-    private ArrayList<String> imageUrlList;
     private String htmlDocument;
     private RequestQueue requestQueue;
     private StringRequest stringRequest;
@@ -30,7 +30,6 @@ public class MainPresenter implements MainContract.Presenter {
     @Override
     public void attachView(MainContract.View view) {
         this.view = view;
-        imageUrlList = new ArrayList<>();
     }
 
     @Override
@@ -49,8 +48,7 @@ public class MainPresenter implements MainContract.Presenter {
             @Override
             public void onResponse(String response) {
                 htmlDocument = response;
-                if (htmlDocument != null)
-                    parseImageUrl();
+                view.vollyCallback();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -69,10 +67,13 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     @Override
-    public void parseImageUrl() {
+    public ArrayList<String> getParseImageUrl() {
+        ArrayList<String> imageUrlList = new ArrayList<>();
         Document document = Jsoup.parse(htmlDocument);
         for (Element e : document.getElementsByTag("img")) {
-            imageUrlList.add(e.absUrl("src"));
+            if (!e.absUrl("src").equals(""))
+                imageUrlList.add(e.absUrl("src"));
         }
+        return imageUrlList;
     }
 }

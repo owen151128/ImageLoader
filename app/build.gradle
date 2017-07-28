@@ -30,5 +30,7 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'    //ButterKnife
     compile 'com.android.volley:volley:1.0.0'   //Volley Library
     compile 'org.jsoup:jsoup:1.10.3'    //Jsoup Library
+    compile 'com.android.support:recyclerview-v7:25.3.1'    //RecyclerView
+    compile 'com.facebook.fresco:fresco:1.4.0'  //Fresco
     testCompile 'junit:junit:4.12'
 }

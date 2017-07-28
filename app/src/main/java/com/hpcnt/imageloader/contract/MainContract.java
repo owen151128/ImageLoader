@@ -2,6 +2,8 @@ package com.hpcnt.imageloader.contract;
 
 import com.android.volley.RequestQueue;
 
+import java.util.ArrayList;
+
 /**
  * Created by 0wen151128 on 2017. 7. 28..
  */
@@ -9,7 +11,9 @@ import com.android.volley.RequestQueue;
 public interface MainContract {
 
     interface View {
-        void setTextView(String text);
+        void vollyCallback();
+
+        void textAlertDialog();
     }
 
     interface Presenter {
@@ -21,6 +25,6 @@ public interface MainContract {
 
         void getHtml(String targetUrl);
 
-        void parseImageUrl();
+        ArrayList<String> getParseImageUrl();
     }
 }
