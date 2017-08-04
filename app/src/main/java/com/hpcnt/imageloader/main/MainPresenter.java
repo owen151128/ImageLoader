@@ -20,15 +20,11 @@ import java.util.ArrayList;
 
 public class MainPresenter implements MainContract.Presenter {
     private MainContract.View view;
-    private ArrayList<String> imageUrlList;
-    private String htmlDocument;
     private RequestQueue requestQueue;
-    private StringRequest stringRequest;
 
     @Override
     public void attachView(MainContract.View view) {
         this.view = view;
-        imageUrlList = new ArrayList<>();
     }
 
     @Override
@@ -38,12 +34,11 @@ public class MainPresenter implements MainContract.Presenter {
 
     @Override
     public void getHtml(String targetUrl) {
-        stringRequest = new StringRequest(targetUrl, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(targetUrl, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                htmlDocument = response;
-                if (htmlDocument != null)
-                    parseImageUrl();
+                if (response != null)
+                    parseImageUrl(response);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -61,10 +56,12 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     @Override
-    public void parseImageUrl() {
+    public ArrayList<String> parseImageUrl(String htmlDocument) {
+        ArrayList<String> imageUrlList = new ArrayList<>();
         Document document = Jsoup.parse(htmlDocument);
         for (Element e : document.getElementsByTag("img")) {
             imageUrlList.add(e.absUrl("src"));
         }
+        return imageUrlList;
     }
 }

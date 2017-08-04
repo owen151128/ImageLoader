@@ -25,9 +25,4 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         mainPresenter.setVolleyQueue(Volley.newRequestQueue(getApplicationContext()));
         mainPresenter.getHtml("http://www.naver.com");
     }
-
-    @Override
-    public void setTextView(String text) {
-        textView.setText(text);
-    }
 }
