@@ -55,8 +55,7 @@ public class MainPresenter implements MainContract.Presenter {
         requestQueue.add(stringRequest);
     }
 
-    @Override
-    public ArrayList<String> parseImageUrl(String htmlDocument) {
+    private ArrayList<String> parseImageUrl(String htmlDocument) {
         ArrayList<String> imageUrlList = new ArrayList<>();
         Document document = Jsoup.parse(htmlDocument);
         for (Element e : document.getElementsByTag("img")) {
