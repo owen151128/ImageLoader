@@ -7,7 +7,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
 
 /**
  * Created by 0wen151128 on 2017. 7. 28..
@@ -16,7 +21,6 @@ import java.net.HttpURLConnection;
 public class MainPresenter implements MainContract.Presenter {
     private MainContract.View view;
     private RequestQueue requestQueue;
-    private StringRequest stringRequest;
 
     @Override
     public void attachView(MainContract.View view) {
@@ -30,10 +34,11 @@ public class MainPresenter implements MainContract.Presenter {
 
     @Override
     public void getHtml(String targetUrl) {
-        stringRequest = new StringRequest(targetUrl, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(targetUrl, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                view.setTextView(response);
+                if (response != null)
+                    parseImageUrl(response);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -50,4 +55,12 @@ public class MainPresenter implements MainContract.Presenter {
         requestQueue.add(stringRequest);
     }
 
+    private ArrayList<String> parseImageUrl(String htmlDocument) {
+        ArrayList<String> imageUrlList = new ArrayList<>();
+        Document document = Jsoup.parse(htmlDocument);
+        for (Element e : document.getElementsByTag("img")) {
+            imageUrlList.add(e.absUrl("src"));
+        }
+        return imageUrlList;
+    }
 }

@@ -9,7 +9,6 @@ import com.android.volley.RequestQueue;
 public interface MainContract {
 
     interface View {
-        void setTextView(String text);
     }
 
     interface Presenter {
